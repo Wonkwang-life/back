@@ -6,7 +6,6 @@ import com.wonkwang.health.dto.ResponseEntityBuilder;
 import com.wonkwang.health.service.PostService;
 import com.wonkwang.health.service.S3Service;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,23 +31,23 @@ public class PostController {
     }
 
     @PostMapping
-    public ResponseEntity<ResponseDTO<?>> createPost(@RequestBody PostDTO postDTO) {
+    public ResponseEntity<ResponseDTO<Long>> createPost(@RequestBody PostDTO postDTO) {
         System.out.println("postDTO = " + postDTO);
-        postService.savePost(postDTO);
-        return ResponseEntityBuilder.build("글 생성 완료", OK);
+        Long createdPostId = postService.createPost(postDTO);
+        return ResponseEntityBuilder.build("글 생성 완료", OK, createdPostId);
     }
 
     @PatchMapping("/{postId}")
-    public ResponseEntity<ResponseDTO<?>> updatePost(@RequestBody PostDTO postDTO, @PathVariable Long postId) {
+    public ResponseEntity<ResponseDTO<Long>> updatePost(@RequestBody PostDTO postDTO, @PathVariable Long postId) {
         System.out.println("postDTO = " + postDTO);
         postService.updatePost(postId, postDTO);
-        return ResponseEntityBuilder.build("글 수정 완료", OK);
+        return ResponseEntityBuilder.build("글 수정 완료", OK, postId);
     }
 
     @DeleteMapping("/{postId}")
-    public ResponseEntity<ResponseDTO<?>> deletePost(@PathVariable Long postId) {
+    public ResponseEntity<ResponseDTO<Long>> deletePost(@PathVariable Long postId) {
         postService.deleteOnePost(postId);
-        return ResponseEntityBuilder.build("글 삭제 완료", OK);
+        return ResponseEntityBuilder.build("글 삭제 완료", OK, postId);
     }
 
     @PostMapping("/image")

@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -20,9 +19,10 @@ public class PostService {
     private final PostRepository postRepository;
     private final S3Service s3Service;
 
-    public void savePost(PostDTO postDTO) {
+    public Long createPost(PostDTO postDTO) {
         Post post = new Post(postDTO);
-        postRepository.save(post);
+        Post savedPost = postRepository.save(post);
+        return savedPost.getId();
     }
     @Transactional
     public void updatePost(Long postId, PostDTO postDTO) {
