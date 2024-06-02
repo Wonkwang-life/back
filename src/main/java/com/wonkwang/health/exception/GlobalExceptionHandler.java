@@ -1,13 +1,18 @@
 package com.wonkwang.health.exception;
 
 import com.wonkwang.health.dto.ResponseDTO;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpSessionRequiredException;
+import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import static com.wonkwang.health.dto.ResponseEntityBuilder.build;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @RestControllerAdvice
 @Slf4j
@@ -15,7 +20,32 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ResponseDTO<?>> handleRuntimeException(RuntimeException ex) {
-        log.info(ex.getMessage());
+        log.info("handleRuntimeException : {}", ex.getMessage());
         return build(ex.getMessage(), BAD_REQUEST);
     }
+
+    @ExceptionHandler(HttpSessionRequiredException.class)
+    public ResponseEntity<ResponseDTO<?>> handleSessionRequiredException(HttpSessionRequiredException ex, HttpServletResponse response) {
+        log.info("handleSessionRequiredException : {}", ex.getMessage());
+        deleteClientCookie(response);
+        return build("로그인 세션이 만료되었거나 없습니다.", UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(ServletRequestBindingException.class)
+    public ResponseEntity<ResponseDTO<?>> handleSessionExpired(ServletRequestBindingException ex, HttpServletResponse response) {
+        log.info("handleSessionExpired : {}", ex.getMessage());
+        deleteClientCookie(response);
+        return build("로그인 세션이 만료되었거나 없습니다.", UNAUTHORIZED);
+    }
+
+    private static void deleteClientCookie(HttpServletResponse response) {
+        Cookie cookie = new Cookie("JSESSIONID", "");
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setMaxAge(0); // 쿠키 만료 시간 설정 (0으로 설정하여 즉시 삭제)
+        response.addCookie(cookie);
+    }
+
+
 }

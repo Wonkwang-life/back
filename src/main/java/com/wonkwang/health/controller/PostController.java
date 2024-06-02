@@ -31,7 +31,7 @@ public class PostController {
     }
 
     @PostMapping
-    public ResponseEntity<ResponseDTO<Long>> createPost(@RequestBody PostDTO postDTO) {
+    public ResponseEntity<ResponseDTO<Long>> createPost(@RequestBody PostDTO postDTO, @SessionAttribute Long userId) {
         System.out.println("postDTO = " + postDTO);
         Long createdPostId = postService.createPost(postDTO);
         return ResponseEntityBuilder.build("글 생성 완료", OK, createdPostId);
