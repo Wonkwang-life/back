@@ -6,6 +6,10 @@ import com.wonkwang.health.dto.ResponseEntityBuilder;
 import com.wonkwang.health.service.PostService;
 import com.wonkwang.health.service.S3Service;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,8 +30,14 @@ public class PostController {
 
     @GetMapping("/{postId}")
     public ResponseEntity<ResponseDTO<PostDTO>> getPost(@PathVariable Long postId) {
-         
+
         return ResponseEntityBuilder.build("글 불러오기 완료", OK, postService.getOnePost(postId));
+    }
+
+    @GetMapping
+    public ResponseEntity<ResponseDTO<Page<PostDTO>>> getPostList(@PageableDefault(size=30, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable) {
+
+        return ResponseEntityBuilder.build("글목록 불러오기 완료", OK, postService.getPostList(pageable));
     }
 
     @PostMapping

@@ -6,6 +6,8 @@ import com.wonkwang.health.repository.PostRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,6 +54,11 @@ public class PostService {
                 .orElseThrow(() -> new EntityNotFoundException("해당 글이 없습니다."));
 
         return new PostDTO(findPost);
+    }
+
+    public Page<PostDTO> getPostList(Pageable pageable) {
+        Page<Post> findPosts = postRepository.findAll(pageable);
+        return findPosts.map(PostDTO::new);
     }
 
     public void deleteOnePost(Long postId) {

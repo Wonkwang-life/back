@@ -1,6 +1,7 @@
 package com.wonkwang.health.repository;
 
 import com.wonkwang.health.domain.Post;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 

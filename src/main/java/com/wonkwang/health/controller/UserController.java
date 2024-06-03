@@ -1,5 +1,6 @@
 package com.wonkwang.health.controller;
 
+import com.wonkwang.health.domain.User;
 import com.wonkwang.health.dto.ResponseDTO;
 import com.wonkwang.health.dto.ResponseEntityBuilder;
 import com.wonkwang.health.dto.UserDTO;
@@ -30,16 +31,17 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<ResponseDTO<Long>> login(@RequestBody UserDTO userDTO, HttpServletRequest request) {
 
-        Long userId = userService.login(userDTO);
+        User findUser = userService.login(userDTO);
 
         request.getSession().invalidate(); //기존 세션 파기
         HttpSession session = request.getSession(true); //세션이 없으면 생성
-        session.setAttribute("userId", userId);
+        session.setAttribute("userId", findUser.getId());
+        session.setAttribute("role", findUser.getRole());
         session.setMaxInactiveInterval(10); //세션 유지 시간 (초)
 
-        log.info("로그인 성공 {}",userId);
+        log.info("로그인 성공 {}",findUser.getId());
 
-        return build("로그인을 성공했습니다.", OK, userId);
+        return build("로그인을 성공했습니다.", OK, findUser.getId());
     }
 
     @GetMapping("/logout")

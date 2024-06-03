@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
         return build("로그인 세션이 만료되었거나 없습니다.", UNAUTHORIZED);
     }
 
-    @ExceptionHandler(ServletRequestBindingException.class)
+    @ExceptionHandler(ServletRequestBindingException.class) //주로 이 예외가 발생함
     public ResponseEntity<ResponseDTO<?>> handleSessionExpired(ServletRequestBindingException ex, HttpServletResponse response) {
         log.info("handleSessionExpired : {}", ex.getMessage());
         deleteClientCookie(response);
