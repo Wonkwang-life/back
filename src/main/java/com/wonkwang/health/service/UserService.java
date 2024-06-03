@@ -27,7 +27,7 @@ public class UserService {
             throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
         }
 
-        return findUser();
+        return findUser;
     }
     
     //관리자만 실행하는 메소드

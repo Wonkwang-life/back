@@ -37,7 +37,7 @@ public class UserController {
         HttpSession session = request.getSession(true); //세션이 없으면 생성
         session.setAttribute("userId", findUser.getId());
         session.setAttribute("role", findUser.getRole());
-        session.setMaxInactiveInterval(10); //세션 유지 시간 (초)
+        session.setMaxInactiveInterval(3600); //세션 유지 시간 (초)
 
         log.info("로그인 성공 {}",findUser.getId());
 
@@ -85,7 +85,7 @@ public class UserController {
             cookie.setSecure(true);
             cookie.setMaxAge(0); // 쿠키 만료 시간 설정 (0으로 설정하여 즉시 삭제)
             response.addCookie(cookie);
-            return build("세션이 만료되었습니다.", HttpStatus.UNAUTHORIZED, null);
+            return build("로그인 세션이 만료되었습니다.", HttpStatus.UNAUTHORIZED, null);
         }
 
         // 세션이 유효한 경우
