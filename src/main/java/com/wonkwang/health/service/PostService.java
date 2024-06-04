@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -54,6 +55,11 @@ public class PostService {
                 .orElseThrow(() -> new EntityNotFoundException("해당 글이 없습니다."));
 
         return new PostDTO(findPost);
+    }
+
+    public List<PostDTO> searchPost(String keyword) {
+        List<Post> searchList = postRepository.findByTitleContaining(keyword);
+        return searchList.stream().map(PostDTO::new).toList();
     }
 
     public Page<PostDTO> getPostList(Pageable pageable) {

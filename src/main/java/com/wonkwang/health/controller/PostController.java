@@ -36,6 +36,14 @@ public class PostController {
         return build("글 불러오기 완료", OK, postService.getOnePost(postId));
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<ResponseDTO<List<PostDTO>>> searchPost(@RequestParam String keyword) {
+        if (keyword.length() < 2) {
+            return build("최소 2글자 이상 입력해주세요.", BAD_REQUEST, null);
+        }
+        return build(keyword + " : 검색 완료", OK, postService.searchPost(keyword));
+    }
+
     @GetMapping
     public ResponseEntity<ResponseDTO<Page<PostDTO>>> getPostList(@PageableDefault(size=30, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable) {
 
