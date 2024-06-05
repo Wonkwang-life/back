@@ -13,15 +13,18 @@ public class PostDTO {
     private Long id;
     private String title;
     private String content;
+    private String storeLink;
     private List<String> imageUrls;
 
     @JsonCreator
     public PostDTO(@JsonProperty String title,
                    @JsonProperty String content,
+                   @JsonProperty String storeLink,
                    @JsonProperty List<String> imageUrls) {
         this.id = null;
         this.title = title;
         this.content = content;
+        this.storeLink = storeLink;
         this.imageUrls = imageUrls;
     }
 
@@ -29,6 +32,7 @@ public class PostDTO {
         id = post.getId();
         title = post.getTitle();
         content = post.getContent();
+        storeLink = post.getStoreLink();
         imageUrls = post.getImageUrls();
     }
 }

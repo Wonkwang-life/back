@@ -25,6 +25,8 @@ public class Post extends BaseTimeEntity {
     @Lob
     private String content;
 
+    private String storeLink;
+
     @ElementCollection
     @OrderColumn(name = "image_url_order")
     private List<String> imageUrls;
@@ -32,12 +34,14 @@ public class Post extends BaseTimeEntity {
     public Post(PostDTO postDTO) {
         title = postDTO.getTitle();
         content = postDTO.getContent();
+        storeLink = postDTO.getStoreLink();
         imageUrls = postDTO.getImageUrls();
     }
 
     public void updatePost(PostDTO postDTO) {
         title = postDTO.getTitle();
         content = postDTO.getContent();
+        storeLink = postDTO.getStoreLink();
         imageUrls = postDTO.getImageUrls();
     }
 }
