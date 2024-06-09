@@ -21,12 +21,17 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final S3Service s3Service;
+    private final DiscordService discordService;
 
     public Long createPost(PostDTO postDTO) {
         String sanitizedContent = sanitize(postDTO.getContent()); //악성 스크립트 제거
         postDTO.setContent(sanitizedContent);
         Post post = new Post(postDTO);
         Post savedPost = postRepository.save(post);
+
+        discordService.sendActivityMessage(postDTO.toString() + " : 제품을 등록했습니다.");
+        log.info("{} : 제품을 등록했습니다.", postDTO.toString());
+
         return savedPost.getId();
     }
     @Transactional
@@ -52,12 +57,16 @@ public class PostService {
         deletedImageUrls.forEach(s3Service::deleteFile);
 
         findPost.updatePost(postDTO);
+
+        discordService.sendActivityMessage(postDTO.toString() + " : 제품을 수정했습니다.");
         log.info("{} 글 수정 완료", postId);
     }
 
+    @Transactional
     public PostDTO getOnePost(Long postId) {
         Post findPost = postRepository.findPostWithUrlsById(postId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 글이 없습니다."));
+        findPost.addHit();
 
         return new PostDTO(findPost);
     }
@@ -80,6 +89,8 @@ public class PostService {
         imageUrls.forEach(s3Service::deleteFile);
 
         postRepository.delete(findPost);
+
+        discordService.sendActivityMessage(postId + " : 제품을 삭제했습니다.");
         log.info("{} 글 삭제 완료", postId);
     }
 

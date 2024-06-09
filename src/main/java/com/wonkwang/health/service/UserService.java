@@ -6,6 +6,7 @@ import com.wonkwang.health.dto.UserDTO;
 import com.wonkwang.health.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,11 +15,13 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final DiscordService discordService;
     public User login(UserDTO userDTO) {
         User findUser = userRepository.findByUsername(userDTO.getUsername())
                 .orElseThrow(() -> new EntityNotFoundException("해당 유저가 없습니다."));
@@ -27,6 +30,8 @@ public class UserService {
             throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
         }
 
+        log.info("{} : 로그인", userDTO.toString());
+        discordService.sendActivityMessage(userDTO.getUsername() + " : 로그인");
         return findUser;
     }
     

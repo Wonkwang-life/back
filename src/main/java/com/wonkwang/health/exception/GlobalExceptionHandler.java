@@ -1,8 +1,10 @@
 package com.wonkwang.health.exception;
 
 import com.wonkwang.health.dto.ResponseDTO;
+import com.wonkwang.health.service.DiscordService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpSessionRequiredException;
@@ -15,18 +17,23 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @RestControllerAdvice
+@RequiredArgsConstructor
 @Slf4j
 public class GlobalExceptionHandler {
+
+    private final DiscordService discordService;
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ResponseDTO<?>> handleRuntimeException(RuntimeException ex) {
         log.info("handleRuntimeException : {}", ex.getMessage());
+        discordService.sendErrorMessage("RuntimeException: " + ex.getMessage());
         return build(ex.getMessage(), BAD_REQUEST);
     }
 
     @ExceptionHandler(HttpSessionRequiredException.class)
     public ResponseEntity<ResponseDTO<?>> handleSessionRequiredException(HttpSessionRequiredException ex, HttpServletResponse response) {
         log.info("handleSessionRequiredException : {}", ex.getMessage());
+        discordService.sendErrorMessage("HttpSessionRequiredException: " + ex.getMessage());
         deleteClientCookie(response);
         return build("로그인 세션이 만료되었거나 없습니다.", UNAUTHORIZED);
     }
@@ -34,6 +41,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ServletRequestBindingException.class) //주로 이 예외가 발생함
     public ResponseEntity<ResponseDTO<?>> handleSessionExpired(ServletRequestBindingException ex, HttpServletResponse response) {
         log.info("handleSessionExpired : {}", ex.getMessage());
+        discordService.sendErrorMessage("ServletRequestBindingException: " + ex.getMessage());
         deleteClientCookie(response);
         return build("로그인 세션이 만료되었거나 없습니다.", UNAUTHORIZED);
     }

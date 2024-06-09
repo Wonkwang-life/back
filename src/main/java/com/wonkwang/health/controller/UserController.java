@@ -45,11 +45,12 @@ public class UserController {
     }
 
     @GetMapping("/logout")
-    public ResponseEntity<ResponseDTO<?>> logout(HttpServletRequest request) {
+    public ResponseEntity<ResponseDTO<?>> logout(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession(false);//세션이 없으면 null return
 
-        if (session != null){
+        if (session != null) {
             session.invalidate();
+            deleteClientCookie(response);
             return build("로그아웃을 성공했습니다.", OK);
         } else {
             return build("현재 로그인 상태가 아닙니다.", BAD_REQUEST);
@@ -79,12 +80,7 @@ public class UserController {
         HttpSession session = request.getSession(false);
         if (session == null || userId == null) {
 
-            Cookie cookie = new Cookie("JSESSIONID", "");
-            cookie.setPath("/");
-            cookie.setHttpOnly(true);
-            cookie.setSecure(true);
-            cookie.setMaxAge(0); // 쿠키 만료 시간 설정 (0으로 설정하여 즉시 삭제)
-            response.addCookie(cookie);
+            deleteClientCookie(response);
             return build("로그인 세션이 만료되었습니다.", HttpStatus.UNAUTHORIZED, null);
         }
 
@@ -92,10 +88,20 @@ public class UserController {
         return build("검증성공", HttpStatus.OK, userId);
     }
 
+
     @GetMapping("/test")
     public ResponseEntity<ResponseDTO<Long>> test(@SessionAttribute("userId") Long userId) {
 
 
         return build("검증성공", OK, userId);
+    }
+
+    private static void deleteClientCookie(HttpServletResponse response) {
+        Cookie cookie = new Cookie("JSESSIONID", "");
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setMaxAge(0); // 쿠키 만료 시간 설정 (0으로 설정하여 즉시 삭제)
+        response.addCookie(cookie);
     }
 }

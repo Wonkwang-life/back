@@ -19,8 +19,13 @@ public class Post extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private Long hit = 0L; //조회수
 
     private String title;
+    private String oneLineIntroduce;
+    private String productType;
+    private String packingUnit;
+    private String tag;
 
     @Lob
     private String content;
@@ -32,16 +37,25 @@ public class Post extends BaseTimeEntity {
     private List<String> imageUrls;
 
     public Post(PostDTO postDTO) {
-        title = postDTO.getTitle();
-        content = postDTO.getContent();
-        storeLink = postDTO.getStoreLink();
-        imageUrls = postDTO.getImageUrls();
+        createEntity(postDTO);
+    }
+    public void updatePost(PostDTO postDTO) {
+        createEntity(postDTO);
     }
 
-    public void updatePost(PostDTO postDTO) {
+    private void createEntity(PostDTO postDTO) {
         title = postDTO.getTitle();
         content = postDTO.getContent();
         storeLink = postDTO.getStoreLink();
         imageUrls = postDTO.getImageUrls();
+        oneLineIntroduce = postDTO.getOneLineIntroduce();
+        productType = postDTO.getProductType();
+        packingUnit = postDTO.getPackingUnit();
+        tag = postDTO.getTag();
     }
+
+    public void addHit() {
+        hit += 1;
+    }
+
 }
