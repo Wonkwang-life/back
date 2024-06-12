@@ -28,7 +28,23 @@ public class S3Service {
 
     public String uploadFile(MultipartFile file) throws IOException {
 
-        String fileName = UUID.randomUUID() + "-" + file.getOriginalFilename();
+        String originalFilename = file.getOriginalFilename();
+
+        // 원본 파일 이름에서 확장자 추출
+        String extension = "";
+        int dotIndex = originalFilename.lastIndexOf('.');
+        if (dotIndex > 0) {
+            extension = originalFilename.substring(dotIndex);
+        }
+
+        String baseFilename = originalFilename.substring(0, dotIndex);
+
+        // 원본 파일 이름을 최대 30자로 제한
+        if (baseFilename.length() > 30) {
+            baseFilename = baseFilename.substring(0, 30);
+        }
+
+        String fileName = UUID.randomUUID() + "-" + baseFilename + extension;
 
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(file.getSize());
