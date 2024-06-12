@@ -25,6 +25,7 @@ public class Post extends BaseTimeEntity {
     private String oneLineIntroduce;
     private String productType;
     private String packingUnit;
+    private String howEat;
     private String tag;
 
     @Lob
@@ -51,6 +52,7 @@ public class Post extends BaseTimeEntity {
         oneLineIntroduce = postDTO.getOneLineIntroduce();
         productType = postDTO.getProductType();
         packingUnit = postDTO.getPackingUnit();
+        howEat = postDTO.getHowEat();
         tag = postDTO.getTag();
     }
 

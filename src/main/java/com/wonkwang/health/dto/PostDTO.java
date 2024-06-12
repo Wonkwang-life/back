@@ -18,6 +18,7 @@ public class PostDTO {
     private String oneLineIntroduce;
     private String productType;
     private String packingUnit;
+    private String howEat;
     private String tag;
     private String content;
     private String storeLink;
@@ -34,6 +35,7 @@ public class PostDTO {
         oneLineIntroduce = post.getOneLineIntroduce();
         productType = post.getProductType();
         packingUnit = post.getPackingUnit();
+        howEat = post.getHowEat();
         tag = post.getTag();
     }
 }
