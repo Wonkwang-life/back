@@ -77,7 +77,7 @@ public class PostService {
     }
 
     public Page<PostDTO> getPostList(Pageable pageable) {
-        Page<Post> findPosts = postRepository.findAll(pageable);
+        Page<Post> findPosts = postRepository.findAllWithImageUrls(pageable);
         return findPosts.map(PostDTO::new);
     }
 

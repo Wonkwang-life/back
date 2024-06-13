@@ -26,10 +26,17 @@ public class DiscordService {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        String jsonPayload = String.format("{\"content\": \"%s\\nTimestamp: %s\"}", escapeJson(message), timestamp);
-        HttpEntity<String> request = new HttpEntity<>(jsonPayload, headers);
 
-        restTemplate.postForObject(url, request, String.class);
+        // 메시지를 1600자 단위로 나누기
+        int chunkSize = 1600;
+        int messageLength = message.length();
+        for (int start = 0; start < messageLength; start += chunkSize) {
+            int end = Math.min(messageLength, start + chunkSize);
+            String chunk = message.substring(start, end);
+            String jsonPayload = String.format("{\"content\": \"%s\\nTimestamp: %s\"}", escapeJson(chunk), timestamp);
+            HttpEntity<String> request = new HttpEntity<>(jsonPayload, headers);
+            restTemplate.postForObject(url, request, String.class);
+        }
     }
 
     public void sendErrorMessage(String message) {

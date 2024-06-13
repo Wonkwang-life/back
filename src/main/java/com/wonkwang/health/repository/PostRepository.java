@@ -2,6 +2,7 @@ package com.wonkwang.health.repository;
 
 import com.wonkwang.health.domain.Post;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,5 +15,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @EntityGraph(attributePaths = "imageUrls")
     Optional<Post> findPostWithUrlsById(Long id);
     List<Post> findByTitleContaining(String keyword);
+
+    @EntityGraph(attributePaths = "imageUrls")
+    @Query("SELECT p FROM Post p")
+    Page<Post> findAllWithImageUrls(Pageable pageable);
 
 }
