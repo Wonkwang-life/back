@@ -25,23 +25,29 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ResponseDTO<?>> handleRuntimeException(RuntimeException ex) {
-        log.info("handleRuntimeException : {}", ex.getMessage());
-        discordService.sendErrorMessage("RuntimeException: " + ex.getMessage());
+        String exceptionClassName = ex.getClass().getName();
+        String message = String.format("handleRuntimeException : %s : %s", exceptionClassName, ex.getMessage());
+        log.info(message);
+        discordService.sendErrorMessage("RuntimeException: " + message);
         return build(ex.getMessage(), BAD_REQUEST);
     }
 
     @ExceptionHandler(HttpSessionRequiredException.class)
     public ResponseEntity<ResponseDTO<?>> handleSessionRequiredException(HttpSessionRequiredException ex, HttpServletResponse response) {
-        log.info("handleSessionRequiredException : {}", ex.getMessage());
-        discordService.sendErrorMessage("HttpSessionRequiredException: " + ex.getMessage());
+        String exceptionClassName = ex.getClass().getName();
+        String message = String.format("handleSessionRequiredException : %s : %s", exceptionClassName, ex.getMessage());
+        log.info(message);
+        discordService.sendErrorMessage("HttpSessionRequiredException: " + message);
         deleteClientCookie(response);
         return build("로그인 세션이 만료되었거나 없습니다.", UNAUTHORIZED);
     }
 
-    @ExceptionHandler(ServletRequestBindingException.class) //주로 이 예외가 발생함
+    @ExceptionHandler(ServletRequestBindingException.class) // 주로 이 예외가 발생함
     public ResponseEntity<ResponseDTO<?>> handleSessionExpired(ServletRequestBindingException ex, HttpServletResponse response) {
-        log.info("handleSessionExpired : {}", ex.getMessage());
-        discordService.sendErrorMessage("ServletRequestBindingException: " + ex.getMessage());
+        String exceptionClassName = ex.getClass().getName();
+        String message = String.format("handleSessionExpired : %s : %s", exceptionClassName, ex.getMessage());
+        log.info(message);
+        discordService.sendErrorMessage("ServletRequestBindingException: " + message);
         deleteClientCookie(response);
         return build("로그인 세션이 만료되었거나 없습니다.", UNAUTHORIZED);
     }
@@ -54,6 +60,4 @@ public class GlobalExceptionHandler {
         cookie.setMaxAge(0); // 쿠키 만료 시간 설정 (0으로 설정하여 즉시 삭제)
         response.addCookie(cookie);
     }
-
-
 }
