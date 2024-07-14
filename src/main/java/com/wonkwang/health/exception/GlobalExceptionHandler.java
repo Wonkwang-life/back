@@ -26,8 +26,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ResponseDTO<?>> handleRuntimeException(RuntimeException ex) {
         String exceptionClassName = ex.getClass().getName();
-        String message = String.format("handleRuntimeException : %s : %s", exceptionClassName, ex.getMessage());
-        log.info(message);
+        String message = String.format("handleRuntimeException : %s : %s ,%s", exceptionClassName, ex.getMessage(), ex);
+        log.error(message);
         discordService.sendErrorMessage("RuntimeException: " + message);
         return build(ex.getMessage(), BAD_REQUEST);
     }
@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ResponseDTO<?>> handleSessionRequiredException(HttpSessionRequiredException ex, HttpServletResponse response) {
         String exceptionClassName = ex.getClass().getName();
         String message = String.format("handleSessionRequiredException : %s : %s", exceptionClassName, ex.getMessage());
-        log.info(message);
+        log.error(message);
         discordService.sendErrorMessage("HttpSessionRequiredException: " + message);
         deleteClientCookie(response);
         return build("로그인 세션이 만료되었거나 없습니다.", UNAUTHORIZED);
@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ResponseDTO<?>> handleSessionExpired(ServletRequestBindingException ex, HttpServletResponse response) {
         String exceptionClassName = ex.getClass().getName();
         String message = String.format("handleSessionExpired : %s : %s", exceptionClassName, ex.getMessage());
-        log.info(message);
+        log.error(message);
         discordService.sendErrorMessage("ServletRequestBindingException: " + message);
         deleteClientCookie(response);
         return build("로그인 세션이 만료되었거나 없습니다.", UNAUTHORIZED);
