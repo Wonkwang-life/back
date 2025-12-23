@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -81,14 +80,21 @@ public class PostService {
         return findPosts.map(PostDTO::new);
     }
 
+    @Transactional
     public void deleteOnePost(Long postId) {
+        // 먼저 존재 여부 확인 및 이미지 URL 조회
         Post findPost = postRepository.findPostWithUrlsById(postId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 글이 없습니다."));
 
+        // S3에서 이미지 삭제
         List<String> imageUrls = findPost.getImageUrls();
-        imageUrls.forEach(s3Service::deleteFile);
-
-        postRepository.delete(findPost);
+        if (imageUrls != null && !imageUrls.isEmpty()) {
+            imageUrls.forEach(s3Service::deleteFile);
+        }
+        
+        // 부모 엔티티 삭제 (ElementCollection은 자동으로 삭제됨)
+        postRepository.deleteById(postId);
+        postRepository.flush(); // 변경사항을 즉시 반영
 
         discordService.sendActivityMessage(postId + " : 제품을 삭제했습니다.");
         log.info("{} 글 삭제 완료", postId);
