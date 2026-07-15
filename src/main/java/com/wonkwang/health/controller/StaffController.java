@@ -30,7 +30,7 @@ public class StaffController {
     }
 
     @PostMapping
-    public ResponseEntity<ResponseDTO<?>> addStaff(StaffDTO staffDTO, @SessionAttribute Role role) {
+    public ResponseEntity<ResponseDTO<?>> addStaff(@RequestBody StaffDTO staffDTO, @SessionAttribute Role role) {
         if (role != Role.ADMIN) {
             return build("권한 부족", FORBIDDEN);
         }
